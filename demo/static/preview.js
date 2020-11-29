@@ -29,9 +29,8 @@ $("#input-img").click(function(){
             contentType: false, //必须
             success: function (data,status) {
                 if (data==''){
-                    alert('上傳封面失敗');
+                    alert('上傳圖片失敗');
                 } else{
-                    var res_url = data['file'];
                     console.log(data);
                     $("#extra_img").attr('src','data:;base64,'+data);
                 }

@@ -10,15 +10,15 @@ from lmodel import Local
 from gmodel import Global
 from dfs import dfs
 import sys
-
+import imageio
 torch.set_printoptions(profile="full")
 np.set_printoptions(threshold=200)
 
-Lpretrained = '/Users/sunny/Documents/GitHub/project-demo/stroke/pretrained/local_train9000.pt'
+Lpretrained = '/Users/sunny/Documents/GitHub/project-demo/demo/stroke/pretrained/local_train9000.pt'
 Lmodel = Local()
 Lmodel.load_state_dict(torch.load(Lpretrained , map_location=torch.device('cpu')))
 
-Gpretrained = '/Users/sunny/Documents/GitHub/project-demo/stroke/pretrained/glomodel_100.pt'
+Gpretrained = '/Users/sunny/Documents/GitHub/project-demo/demo/stroke/pretrained/glomodel_100.pt'
 Gmodel = Global()
 Gmodel.load_state_dict(torch.load(Gpretrained , map_location=torch.device('cpu')))
 
@@ -77,7 +77,10 @@ def stroke(file_path):
         locate_x = locate/109
         locate_y = locate%109
         input = torch.cat((locate_y,locate_x),0)
-        
+        print(input)
+        locate_x =  locate_x.long()
+        locate_y =  locate_y.long()
+        print(locate_x,locate_y)
         #print('locate:',locate_x,locate_y)
         #print(torch_tar[p])
 
@@ -119,6 +122,9 @@ def stroke(file_path):
                 break
             nx = head[0]+shifted_x
             ny = head[1]+shifted_y
+
+            nx = nx.long()
+            ny = ny.long()
             v[0,nx,ny] = 1
             uv[0,nx,ny] = 0
             head = (nx , ny)
@@ -138,17 +144,18 @@ def stroke(file_path):
         #print('output:',nx,ny)
         #print("output:",touched)
         le[0,nx,ny] = 1
-        image = to_pil(v.cpu().clone())
+        #image = to_pil(v.cpu().clone())
         #imageuv = to_pil(img_c.cpu().clone())
-        tmp = path.split('/')[3]
-        tmp = tmp.split('.')[0]
-        image.save(f'./{tmp}_{id}.jpg')
+        #tmp = path.split('/')[3]
+        #tmp = tmp.split('.')[0]
+        #image.save(f'/Users/sunny/Documents/GitHub/project-demo/out/{id}.jpg')
         #imageuv.save(f'./unvis/uv_{id}.jpg')
         id += 1
         first = False
-    #image_list[0].save('./output/out.gif', save_all = True, append_images = image_list[1:])
-    with open(f'./output_Stk/{tmp}.txt','w') as f:
-        f.write(ans)
-   
+    #image_list[0].save('/Users/sunny/Documents/GitHub/project-demo/out/out.gif', save_all = True, append_images = image_list[1:])
+    gif_path = "/Users/sunny/Documents/GitHub/project-demo/out/out.gif"
+    imageio.mimsave(gif_path,image_list,fps=40)
+    
+    return gif_path
 if __name__ == "__main__":
-    stroke('/Users/sunny/Documents/GitHub/project-demo/demo/卜.JPG')
+    stroke('/Users/sunny/Documents/GitHub/project-demo/tmp/卜.JPG')
