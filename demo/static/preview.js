@@ -33,6 +33,7 @@ $("#input-img").click(function(){
                 } else{
                     console.log(data);
                     $("#extra_img").attr('src','data:;base64,'+data);
+                    
                 }
             },
 
