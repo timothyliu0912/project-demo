@@ -17,22 +17,26 @@ $("#input-img").click(function(){
     }
     else
     {
-        var fReader = new FileReader();
-        fReader.readAsDataURL(input)
-        fReader.onloadend = function(event)
-        {
-            var src = event.target.result;
-            console.log(src);
-            $.ajax({
-                type: "POST",
-                url: "/send",
-                data: {
-                    query: src
-                    },
-                success: function (msg) {
-                    console.log(msg.data);
+        var form_data = new FormData();
+        console.log(form_data);
+        form_data.append('file',input);
+        console.log(form_data.get('file'));
+        $.ajax({
+            type: "POST",
+            url: "/upload",
+            data: form_data,
+            processData: false,//用于对data参数进行序列化处理 这里必须false
+            contentType: false, //必须
+            success: function (data,status) {
+                if (data==''){
+                    alert('上傳封面失敗');
+                } else{
+                    var res_url = data['file'];
+                    console.log(data);
+                    $("#extra_img").attr('src','data:;base64,'+data);
                 }
-            });
-        }
+            },
+
+        });
     }
 });
